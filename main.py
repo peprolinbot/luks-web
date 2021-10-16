@@ -11,14 +11,18 @@ app = Flask(__name__)
 
 @app.route('/unlock/<device_id>', methods=['GET', 'POST']) #device_id is the id of the device in settings.yaml
 def unlock_luks_device(device_id):
-    key = request.args.get('key')
     device_settings = settings["devices"][device_id]
+    key = request.args.get('key')
+    key_file = f"/tmp/{device_settings.get('name')}.key"
 
     with open(f"/tmp/{device_settings.get('name')}.key", 'w') as f:
         f.write(key)
 
-    cryptsetup_result = subprocess.run(["cryptsetup", "luksOpen", device_settings.get('path'), device_settings.get('name'), "-d", f"/tmp/{device_settings.get('name')}.key"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    cryptsetup_result = subprocess.run(["cryptsetup", "luksOpen", device_settings.get('path'), device_settings.get('name'), "-d", key_file], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     cryptsetup_output = cryptsetup_result.stdout.decode("utf-8")
+
+    subprocess.run(["rm", key_file])
+
     mount_result = subprocess.run(["mount", f"/dev/mapper/{device_settings.get('name')}", device_settings.get('mount')], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     mount_output = mount_result.stdout.decode("utf-8")
     if cryptsetup_result.returncode == 0 and mount_result.returncode == 0:
