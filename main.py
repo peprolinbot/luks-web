@@ -1,12 +1,14 @@
 import subprocess
 import os
-from flask import Flask, request,render_template
+from flask import Flask, request, render_template, redirect, url_for
 import yaml
 
 SETTINGS_FILE=os.environ.get('LW_SETTINGS_FILE', "settings.yaml")
 
 with open(SETTINGS_FILE, 'r') as f:
     settings = yaml.load(f, Loader=yaml.CLoader)
+
+STOP_CMD=os.environ.get('LW_STOP_CMD') or settings["stop_cmd"]
 
 app = Flask(__name__)
 
@@ -24,9 +26,14 @@ def unlock_page():
                 function reqListener () {{
                     const response = JSON.parse(this.responseText);
                     if ( response.status == "unlocked" ) {{
+                        clearInterval(checkUnlockedInterval);
                         {device_id}.disabled = true;
                         {device_id}_submit.style.display = "none";
                         {device_id}_status.innerHTML = "✅";
+                        encryptedDevices -= 1;
+                        if ( encryptedDevices <= 0 ) {{
+                            setTimeout("window.location.href = '/unlocked.html'", 2000);
+                        }}
                     }}
                 }}
 
@@ -39,13 +46,27 @@ def unlock_page():
                 }}
 
                 checkUnlocked();
-                setInterval(checkUnlocked, 5000);
+                var checkUnlockedInterval = setInterval(checkUnlocked, 5000);
             </script>
         </form>
         """) # Double curlies are for escaping
     password_forms_str = "\n".join(password_forms)
     return render_template('unlock.html',
-                           password_forms=password_forms_str)
+                           password_forms=password_forms_str,
+                           encrypted_devices=len(password_forms))
+
+@app.route('/unlocked.html')
+def unlocked_page():
+    devices = settings["devices"]
+
+    all_unlocked = True
+    for device_id, device in devices.items():
+        if not os.path.exists(f"/dev/mapper/{device.get('name')}"):
+            all_unlocked = False
+    if all_unlocked:
+        return render_template('unlocked.html')
+    else:
+        return redirect(url_for('unlock_page'))
 
 @app.route('/unlock/<device_id>', methods=['GET', 'POST']) #device_id is the id of the device in settings.yaml
 def unlock_luks_device(device_id):
@@ -85,6 +106,19 @@ def check_unlocked_luks_device(device_id):
         return {"status": "unlocked"}
     else:
         return {"status": "locked"}
+
+@app.route('/kill', methods=['GET', 'POST'])
+def kill():
+    devices = settings["devices"]
+
+    all_unlocked = True
+    for device_id, device in devices.items():
+        if not os.path.exists(f"/dev/mapper/{device.get('name')}"):
+            all_unlocked = False
+    if all_unlocked:
+        return {"exit_code": os.system(STOP_CMD)}
+    else:
+        return {"message": "You can't do that until you unlock all the devices"}
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')

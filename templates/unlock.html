@@ -12,6 +12,9 @@
       <div>
         {{ password_forms | safe }}
         <iframe style="display:none" name="hidden-form"></iframe>
+        <script>
+          var encryptedDevices = {{ encrypted_devices }};
+        </script>
       </div>
   </article>
 </body>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Luks-Web</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='unlocked.css') }}">
+</head>
+<body>
+  <article>
+      <h1>Succesfully decrypted</h1>
+      <p>Do you want to shutdown this service?</p>
+      <div>
+        <script>
+        function reqListener () {
+          const response = JSON.parse(this.responseText);
+          if ( response.exit_code == 0 ) {
+            location.reload();
+          } else {
+            alert("There was an error while shutting down the server");
+          }
+        }
+
+        function killServer() {
+          var target = '/kill';
+          var xhr = new XMLHttpRequest();
+          xhr.addEventListener("load", reqListener);
+          xhr.open('GET', target);
+          xhr.send();
+        }
+        </script>
+        <button type="button" onclick="killServer()">Shutdown</button>
+      </div>
+  </article>
+</body>
+</html>
