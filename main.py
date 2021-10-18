@@ -3,7 +3,7 @@ import os
 from flask import Flask, request,render_template
 import yaml
 
-SETTINGS_FILE="settings.yaml"
+SETTINGS_FILE=os.environ.get('LW_SETTINGS_FILE', "settings.yaml")
 
 with open(SETTINGS_FILE, 'r') as f:
     settings = yaml.load(f, Loader=yaml.CLoader)
