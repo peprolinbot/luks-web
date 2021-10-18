@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Decryption</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='unlock.css') }}">
+</head>
+<body>
+  <article>
+      <h1>Decryption</h1>
+      <p>Some of your files are encrypted.</p>
+      <p>Please provide the decryption password.</p>
+      <div>
+        {{ password_forms | safe }}
+        <iframe style="display:none" name="hidden-form"></iframe>
+      </div>
+  </article>
+</body>
+</html>
