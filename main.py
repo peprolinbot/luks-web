@@ -6,7 +6,7 @@ import yaml
 SETTINGS_FILE="settings.yaml"
 
 with open(SETTINGS_FILE, 'r') as f:
-    settings = yaml.load(f)
+    settings = yaml.load(f, Loader=yaml.CLoader)
 
 app = Flask(__name__)
 
