@@ -18,16 +18,16 @@ def unlock_page():
     for device_id, device in settings["devices"].items():
         password_forms.append(f"""
         <form id={device_id}_form action="/unlock/{device_id}" method="POST" target="hidden-form">
-            <label for="{device_id}">Passphrase for {device.get("name")}:</label>
-            <input type="password" id="{device_id}" name="{device_id}" value="">
-            <label for="{device_id}" id="{device_id}_status">❌</label>
+            <label for="{device_id}_password">Passphrase for {device.get("name")}:</label>
+            <input type="password" id="{device_id}_password" name="{device_id}_password" value="">
+            <label for="{device_id}_password" id="{device_id}_status">❌</label>
             <input type="submit" id="{device_id}_submit" value="Submit">
             <script>
-                function reqListener () {{
+                function {device_id}_reqListener () {{
                     const response = JSON.parse(this.responseText);
                     if ( response.status == "unlocked" ) {{
-                        clearInterval(checkUnlockedInterval);
-                        {device_id}.disabled = true;
+                        clearInterval({device_id}_checkUnlockedInterval);
+                        {device_id}_password.disabled = true;
                         {device_id}_submit.style.display = "none";
                         {device_id}_status.innerHTML = "✅";
                         encryptedDevices -= 1;
@@ -37,16 +37,16 @@ def unlock_page():
                     }}
                 }}
 
-                function checkUnlocked() {{
+                function {device_id}_checkUnlocked() {{
                     var target = '/check_unlocked/{device_id}';
                     var xhr = new XMLHttpRequest();
-                    xhr.addEventListener("load", reqListener);
+                    xhr.addEventListener("load", {device_id}_reqListener);
                     xhr.open('GET', target);
                     xhr.send();
                 }}
 
-                checkUnlocked();
-                var checkUnlockedInterval = setInterval(checkUnlocked, 5000);
+                {device_id}_checkUnlocked();
+                var {device_id}_checkUnlockedInterval = setInterval({device_id}_checkUnlocked, 5000);
             </script>
         </form>
         """) # Double curlies are for escaping
@@ -71,7 +71,7 @@ def unlocked_page():
 @app.route('/unlock/<device_id>', methods=['GET', 'POST']) #device_id is the id of the device in settings.yaml
 def unlock_luks_device(device_id):
     device_settings = settings["devices"][device_id]
-    key =  request.form.get(device_id) or request.args.get('key')
+    key =  request.form.get(f"{device_id}_password") or request.args.get('key')
     key_file = f"/tmp/{device_settings.get('name')}.key"
 
     with open(f"/tmp/{device_settings.get('name')}.key", 'w') as f:
