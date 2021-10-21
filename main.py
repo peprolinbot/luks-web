@@ -32,7 +32,7 @@ def unlock_page():
                         {device_id}_status.innerHTML = "✅";
                         encryptedDevices -= 1;
                         if ( encryptedDevices <= 0 ) {{
-                            setTimeout("window.location.href = '/unlocked.html'", 2000);
+                            setTimeout("window.location.href = '/unlocked'", 2000);
                         }}
                     }}
                 }}
@@ -55,7 +55,7 @@ def unlock_page():
                            password_forms=password_forms_str,
                            encrypted_devices=len(password_forms))
 
-@app.route('/unlocked.html')
+@app.route('/unlocked')
 def unlocked_page():
     devices = settings["devices"]
 
