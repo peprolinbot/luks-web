@@ -1,0 +1,16 @@
+[Unit]
+Description=A simple Web-UI to unlock your LUKS devices when you boot your computer
+Documentation=https://github.com/peprolinbot/luks-web
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+WorkingDirectory=/opt/luks-web
+Environment=LW_STOP_CMD="systemctl stop luks-web"
+Environment=LW_SETTINGS_FILE=/etc/luks-web/settings.yaml
+ExecStart=/usr/local/bin/gunicorn main:app -b 0.0.0.0:8000
+Restart=always
+RestartSec=12
+
+[Install]
+WantedBy=default.target

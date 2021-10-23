@@ -1,0 +1,13 @@
+# All of the values here must be set. They are NOT optional
+devices: # List of devices to decrypt
+  data: # Not actually important
+    name: data_crypt # Name to use for the mapper and to show in the web
+    path: /dev/sda3 # Path or device where the LUKS device is located
+    mount: /data # Where to mount the decrypted device
+
+  media:
+    name: media_crypt
+    path: /dev/sdb1
+    mount: /media
+
+stop_cmd: systemctl stop luks-web # This value can be overwritten by the LW_STOP_CMD env var.
