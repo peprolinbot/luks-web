@@ -18,7 +18,7 @@ Requirements are in `requirements.txt`. These must be installed **as root** (or 
   cd /opt
   sudo git clone https://github.com/peprolinbot/luks-web.git
   cd luks-web
-  sudo pip3 install requirements.txt
+  sudo pip3 install -r requirements.txt
   ```
 
 - Create the file `/etc/systemd/system/luks-web.service` and edit if neccesary:
@@ -51,7 +51,7 @@ These are the commands to run this thing. You can handle the execution with what
 ```bash
 git clone https://github.com/peprolinbot/luks-web.git
 cd luks-web
-sudo pip3 install requirements.txt
+sudo pip3 install -r requirements.txt
 sudo python3 main.py # For development
 # OR
 sudo gunicorn main:app -b 0.0.0.0:8000 # For production
