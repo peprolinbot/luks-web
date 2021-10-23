@@ -8,7 +8,7 @@ A simple Web-UI to unlock your LUKS devices when you boot your computer.
 
 #### Requirements
 
-Requirements are in `requirements.txt`. These are must be installed **as root** (or with sudo), as you'll need root access to run this program because it needs access to the device mapper and mounting capabilities.
+Requirements are in `requirements.txt`. These must be installed **as root** (or with sudo), as you'll need root access to run this program because it needs access to the device mapper and mounting capabilities.
 
 ### 🧰 Systemd (Recommended)
 
