@@ -92,7 +92,7 @@ stop_cmd: systemctl stop luks-web # This value can be overwritten by the LW_STOP
 
 _**Note:**_ The id of a device is the name used to define it in the settings. In the example configuration file above the device ids would be _data_ and _media_.
 
-- GET, POST - _/unlock/**device_id**?key=**device_password**_ - Unlocks the specified device. The password can also be passed as form data with name _**device_id**_password_
+- GET, POST - _/unlock/**device_id**?key=**device_password**_ - Unlocks the specified device. The password can also be passed as form data with name _**device\_id**\_password_
   - Output:
   ```json
   {"status": "succesful", #Or "error"
