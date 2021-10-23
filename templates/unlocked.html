@@ -13,11 +13,7 @@
         <script>
         function reqListener () {
           const response = JSON.parse(this.responseText);
-          if ( response.exit_code == 0 ) {
-            location.reload();
-          } else {
-            alert("There was an error while shutting down the server");
-          }
+          location.reload();
         }
 
         function killServer() {
