@@ -8,16 +8,49 @@
 </head>
 <body>
   <article>
-      <h1>Decryption</h1>
-      <p>Some of your files are encrypted.</p>
-      <p>Please provide the decryption password.</p>
-      <div>
-        {{ password_forms | safe }}
-        <iframe style="display:none" name="hidden-form"></iframe>
+    <h1>Decryption</h1>
+    <p>Some of your files are encrypted.</p>
+    <p>Please provide the decryption password.</p>
+    <div>
+      {% for device_id, device in devices %}
+      <form id={{ device_id }}_form action="/unlock/{{ device_id }}" method="POST" target="hidden-form">
+        <label for="{{ device_id }}_password">Passphrase for {{ device.name }}:</label>
+        <input type="password" id="{{ device_id }}_password" name="{{ device_id }}_password" value="">
+        <label for="{{ device_id }}_password" id="{{ device_id }}_status">❌</label>
+        <input type="submit" id="{{ device_id }}_submit" value="Submit">
         <script>
-          var encryptedDevices = {{ encrypted_devices }};
+          function {{ device_id }}_reqListener () {
+            const response = JSON.parse(this.responseText);
+            if ( response.status == "unlocked" ) {
+              clearInterval({{ device_id }}_checkUnlockedInterval);
+              {{ device_id }}_password.disabled = true;
+              {{ device_id }}_submit.style.display = "none";
+              {{ device_id }}_status.innerHTML = "✅";
+              encryptedDevices -= 1;
+              if ( encryptedDevices <= 0 ) {
+                setTimeout("window.location.href = '/unlocked'", 2000);
+              }
+            }
+          }
+
+          function {{ device_id }}_checkUnlocked() {
+            var target = '/check_unlocked/{{ device_id }}';
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener("load", {{ device_id }}_reqListener);
+            xhr.open('GET', target);
+            xhr.send();
+          }
+
+          {{ device_id }}_checkUnlocked();
+          var {{ device_id }}_checkUnlockedInterval = setInterval({{ device_id }}_checkUnlocked, 5000);
         </script>
-      </div>
+      </form>
+      {% endfor %}
+      <iframe style="display:none" name="hidden-form"></iframe>
+      <script>
+        var encryptedDevices = {{ encrypted_devices }};
+      </script>
+    </div>
   </article>
 </body>
 </html>
