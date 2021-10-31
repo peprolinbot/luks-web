@@ -75,8 +75,8 @@ These are the contents of `settings.yaml.example`:
 ```yaml
 # All of the values here must be set. They are NOT optional
 devices: # List of devices to decrypt
-  data: # Not actually important
-    name: data_crypt # Name to use for the mapper and to show in the web
+  data: # Name to show in the web and use with the API
+    name: data_crypt # Name to use for the mapper
     path: /dev/sda3 # Path or device where the LUKS device is located
     mount: /data # Where to mount the decrypted device
 
