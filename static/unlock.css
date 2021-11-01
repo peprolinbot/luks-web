@@ -15,6 +15,10 @@ article {
   width: 90vw;
   margin: 0 auto;
 }
+form {
+  display: grid;
+  justify-content: center;
+}
 input {
   padding: 12px 20px;
   margin: 8px 0;
@@ -22,12 +26,12 @@ input {
   border: 1px solid #ccc;
 }
 input[type=password] {
-  width: 75%;
+  width: 90vw;
   font-size: 24px;
 }
 input[type=submit] {
   cursor: pointer;
-  width: 75%;
+  width: 90vw;
 }
 input[type=submit]:hover {
   background-color: #d9d9d9;
